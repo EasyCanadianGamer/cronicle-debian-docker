@@ -1,0 +1,16 @@
+services:
+  cronicle:
+    image: Debian-Cronicle:debian
+    restart: unless-stopped
+    hostname: cronicle
+    environment:
+      - CRONICLE_manager=1
+      - CRONICLE_secret_key=your_secret_key_here
+    ports:
+      - "3012:3012"
+    volumes:
+      - ./data/data:/opt/cronicle/data:rw
+      - ./data/logs:/opt/cronicle/logs:rw
+      - ./data/plugins:/opt/cronicle/plugins:rw
+      - ./scripts:/opt/cronicle/scripts:ro
+      - ./backups:/opt/cronicle-backup:rw
