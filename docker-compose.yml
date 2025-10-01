@@ -1,11 +1,12 @@
+version: "3"
 services:
   cronicle:
-    image: Debian-Cronicle:debian
+    image: eyadmerajuddin2005/cronicle-debian-docker:latest
     restart: unless-stopped
     hostname: cronicle
     environment:
       - CRONICLE_manager=1
-      - CRONICLE_secret_key=your_secret_key_here
+      - CRONICLE_secret_key=SECRET_KEY
     ports:
       - "3012:3012"
     volumes:
@@ -14,3 +15,4 @@ services:
       - ./data/plugins:/opt/cronicle/plugins:rw
       - ./scripts:/opt/cronicle/scripts:ro
       - ./backups:/opt/cronicle-backup:rw
+      - ./data/conf:/opt/cronicle/conf:rw

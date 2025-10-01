@@ -11,25 +11,27 @@ RUN apt-get update && apt-get install -y \
     libjpeg-dev \
     libgif-dev \
     librsvg2-dev \
-    && rm -rf /var/lib/apt/lists/*
-
-# Install Node.js 20.x (or your preferred LTS)
-RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
-    && apt-get install -y nodejs \
+    nodejs \
+    npm \
     && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
 WORKDIR /opt/cronicle
 
-# Copy Cronicle files
-COPY . /opt/cronicle
+# Run Cronicle auto-installer
+RUN curl -s https://raw.githubusercontent.com/jhuckaby/Cronicle/master/bin/install.js | node
 
-# Install npm dependencies
-RUN npm install -g tsx \
-    && npm install
+# Create persistent folders
+RUN mkdir -p /opt/cronicle/data /opt/cronicle/logs /opt/cronicle/plugins /opt/cronicle-backup
+
+# Add default config.json
+COPY conf/config.json /opt/cronicle/conf/config.json
 
 # Expose Cronicle port
 EXPOSE 3012
 
-# Default entrypoint to start Cronicle manager
-ENTRYPOINT ["/opt/cronicle/bin/manager"]
+# Entrypoint script to setup storage (once) and start Cronicle
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
